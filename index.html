@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+  <title>love</title>
+  <link href="https://cdn.bootcss.com/mdui/0.2.1/css/mdui.min.css" rel="stylesheet">
+</head>
+<script id="template" type="x-tmpl-mustache">
+  {{#datas}}
+  <a class="card-box mdui-col-sm-6 mdui-col-md-4" href="content.html?video={{video}}">
+    <div class="mdui-card mdui-ripple mdui-hoverable mdui-m-b-3">
+      <div class="mdui-card-media">
+        <img src="{{image}}">
+        <div class="mdui-card-primary ">
+          <div class="mdui-card-header-avatar "><i class="mdui-icon material-icons ">ondemand_video</i></div>
+          <div class="mdui-card-primary-title ">{{title}}</div>
+          <div class="mdui-card-content">{{content}}</div>
+        </div>
+      </div>
+    </div>
+  </a>
+  {{/datas}}
+</script>
+
+<body class="mdui-appbar-with-toolbar mdui-theme-primary-indigo mdui-theme-accent-pink mdui-loaded">
+  <header class="mdui-appbar mdui-appbar-fixed">
+    <div class="mdui-toolbar mdui-color-theme">
+      <span class="mdui-btn mdui-btn-icon mdui-ripple mdui-ripple-white" mdui-drawer="{target: '#main-drawer'}"><i class="mdui-icon material-icons">menu</i></span>
+      <a href="./" class="mdui-typo-headline"><i class="mdui-icon material-icons">home</i>主页</a>
+    </div>
+  </header>
+  <div class="mdui-drawer mdui-drawer-close mdui-p-t-3" id="main-drawer">
+    <li filter="a" class="mdui-list-item mdui-ripple">
+      <i class="mdui-list-item-icon mdui-icon material-icons">video_library</i>
+      <div class="mdui-list-item-content">所有</div>
+    </li>
+    <li filter="m" class="mdui-list-item mdui-ripple">
+      <i class="mdui-list-item-icon mdui-icon material-icons">music_video</i>
+      <div class="mdui-list-item-content">音乐</div>
+    </li>
+    <li filter="v" class="mdui-list-item mdui-ripple">
+      <i class="mdui-list-item-icon mdui-icon material-icons">movie</i>
+      <div class="mdui-list-item-content">电影</div>
+    </li>
+    <div class="mdui-list" mdui-collapse="{accordion: true}" style="margin-bottom: 76px;">
+      <div class="mdui-collapse-item mdui-collapse-item-open">
+        <div class="mdui-collapse-item-header mdui-list-item mdui-ripple">
+          <i class="mdui-list-item-icon mdui-icon material-icons mdui-text-color-purple">local_mall</i>
+          <div class="mdui-list-item-content">资源</div>
+          <i class="mdui-collapse-item-arrow mdui-icon material-icons">keyboard_arrow_down</i>
+        </div>
+        <div class="mdui-collapse-item-body mdui-list">
+          <a href="https://johnsonwjx.github.io" class="mdui-list-item mdui-ripple ">
+          <i class="mdui-icon material-icons">book</i>
+            日记
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div id="content" class="mdui-container mdui-row mdui-p-t-2">
+    <div class="mdui-spinner mdui-m-l-5"></div>
+  </div>
+  <button onclick="document.documentElement.scrollTo(0, 0);" id="toTop" class="mdui-fab mdui-fab-fixed mdui-ripple mdui-color-blue"><i class="mdui-icon material-icons ">arrow_upward</i></button>
+  <script src="https://cdn.bootcss.com/mdui/0.2.1/js/mdui.min.js "></script>
+  <script src="https://cdn.bootcss.com/mustache.js/2.3.0/mustache.min.js "></script>
+  <script type="text/javascript ">
+    var require, module;
+    (function() {
+      'use strict';
+
+      function getJSON(jsonURL, cb, errBack) {
+        function handleError(e) {
+          if (errBack) {
+            return errBack(e, jsonURL);
+          }
+          throw e + ' (' + jsonURL + ')';
+        }
+        if (Array.isArray(jsonURL)) {
+          return Promise.all(jsonURL.map(getJSON)).then(function(arr) {
+            if (cb) {
+              cb.apply(null, arr);
+            }
+            return arr;
+          }).catch(function(err) {
+            handleError(err);
+          });
+        }
+        if (typeof cb !== 'function' && typeof errBack !== 'function') { // Do typeof checks to allow for easier array promise usage of getJSON (as above)
+          return new Promise(getJSON.bind(null, jsonURL));
+        }
+        try {
+          // Todo: use fetch API for greater elegance
+          var r = require === undefined ? new XMLHttpRequest() : new(require('local-xmlhttprequest').XMLHttpRequest)();
+
+          r.open('GET', jsonURL, true);
+          //r.responseType = 'json';
+          r.onreadystatechange = function() {
+            if (r.readyState !== 4) {
+              return;
+            }
+            if (r.status === 200) {
+              //var json = r.json;
+              var response = r.responseText;
+
+              var json = JSON.parse(response);
+              cb(json);
+              return;
+            }
+            // Request failed
+            throw "Failed to fetch URL: " + jsonURL + 'state: ' + r.readyState + '; status: ' + r.status;
+          };
+          r.send();
+        } catch (e) {
+          handleError(e);
+        }
+      }
+      var $$ = mdui.JQ;
+      var template = $$('#template').html()
+      Mustache.parse(template);
+      var videos;
+      getJSON('/config.json', function(data) {
+        videos = data;
+        var rendered = Mustache.render(template, videos);
+        $$('#content').html(rendered);
+      })
+      var fab = new mdui.Fab('#toTop');
+      fab.hide();
+      var pageFlag = true;
+      window.addEventListener('scroll', function() {
+        var bodyTop = (document.documentElement && document.documentElement.scrollTop) || document.body.scrollTop;
+        if (pageFlag && bodyTop > 30) {
+          fab.show();
+          pageFlag = false;
+        } else if (bodyTop <= 30) {
+          fab.hide();
+          pageFlag = true;
+        }
+      });
+      var preFilter;
+      var filterByType = function(type) {
+        if (type == preFilter) {
+          return;
+        }
+        var result;
+        if (type === 'a') {
+          result = videos;
+        } else {
+          result = {
+            datas: videos.datas.filter(function(video) {
+              return video.type === type;
+            })
+          };
+        }
+        var rendered = Mustache.render(template, result);
+        $$('#content').html(rendered);
+        preFilter = type;
+      };
+      $$('#main-drawer>li').on('click', function() {
+        filterByType($$(this).attr('filter'));
+      });
+    })();
+  </script>
+</body>
+
+</html>
