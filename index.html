@@ -28,10 +28,18 @@
 </script>
 
 <body class="mdui-appbar-with-toolbar mdui-theme-primary-indigo mdui-theme-accent-pink mdui-loaded">
+  <!-- 头部 -->
   <header class="mdui-appbar mdui-appbar-fixed">
     <div class="mdui-toolbar mdui-color-theme">
       <span class="mdui-btn mdui-btn-icon mdui-ripple mdui-ripple-white" mdui-drawer="{target: '#main-drawer'}"><i class="mdui-icon material-icons">menu</i></span>
-      <a href="./" class="mdui-typo-headline"><i class="mdui-icon material-icons">home</i>主页</a>
+      <a href="./" class="mdui-typo-headline">主页</a>
+      <div class="mdui-toolbar-spacer"></div>
+      <div class="mdui-textfield mdui-textfield-expandable mdui-float-right">
+        <button class="mdui-textfield-icon mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">search</i></button>
+        <input id="search" class="mdui-textfield-input" type="text" placeholder="搜索" data-cip-id="cIPJQ342845649">
+        <button class="mdui-textfield-close mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">close</i></button>
+      </div>
+      <a id="refresh" class="mdui-btn mdui-btn-icon"><i class="mdui-icon material-icons">refresh</i></a>
     </div>
   </header>
   <div class="mdui-drawer mdui-drawer-close mdui-p-t-3" id="main-drawer">
@@ -66,21 +74,42 @@
             日记
           </a>
         </div>
+        <div class="mdui-collapse-item-body mdui-list">
+          <a href="/qrcode.html" class="mdui-list-item mdui-ripple ">
+          <i class="mdui-icon material-icons mdui-text-color-blue">near_me</i>
+             QR
+          </a>
+        </div>
       </div>
     </div>
   </div>
-  <div id="content" class="mdui-container mdui-row mdui-p-t-2">
-    <div class="mdui-spinner mdui-m-l-5"></div>
-  </div>
-  <div id="plus"></div>
+  <!-- 头部 -->
 
-  <button onclick="document.documentElement.scrollTo(0, 0);" id="toTop" class="mdui-fab mdui-fab-fixed mdui-ripple mdui-color-blue"><i class="mdui-icon material-icons ">arrow_upward</i></button>
+  <div class="mdui-container mdui-p-t-2">
+    <div id="content" class="mdui-row">
+      <div class="mdui-spinner mdui-m-l-5"></div>
+    </div>
+  </div>
+  <div id="YoYo"></div>
+  <button id="toTop" class="mdui-fab mdui-fab-fixed mdui-ripple mdui-color-blue"><i class="mdui-icon material-icons ">arrow_upward</i></button>
   <script src="https://cdn.bootcss.com/mdui/0.2.1/js/mdui.min.js "></script>
   <script src="https://cdn.bootcss.com/mustache.js/2.3.0/mustache.min.js "></script>
   <script type="text/javascript ">
     var require, module;
     (function() {
       'use strict';
+      var $$ = mdui.JQ;
+
+      function getUrlParameter(name) {
+        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+        var results = regex.exec(location.search);
+        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+      };
+
+      function toTop() {
+        window.scrollTo(0, 0);
+      }
 
       function getJSON(jsonURL, cb, errBack) {
         function handleError(e) {
@@ -88,16 +117,6 @@
             return errBack(e, jsonURL);
           }
           throw e + ' (' + jsonURL + ')';
-        }
-        if (Array.isArray(jsonURL)) {
-          return Promise.all(jsonURL.map(getJSON)).then(function(arr) {
-            if (cb) {
-              cb.apply(null, arr);
-            }
-            return arr;
-          }).catch(function(err) {
-            handleError(err);
-          });
         }
         if (typeof cb !== 'function' && typeof errBack !== 'function') { // Do typeof checks to allow for easier array promise usage of getJSON (as above)
           return new Promise(getJSON.bind(null, jsonURL));
@@ -128,15 +147,25 @@
           handleError(e);
         }
       }
-      var $$ = mdui.JQ;
       var template = $$('#template').html()
       Mustache.parse(template);
-      var videos;
+      var videos, allRender;
       getJSON('/config.json', function(data) {
         videos = data;
-        var rendered = Mustache.render(template, videos);
-        $$('#content').html(rendered);
+        allRender = Mustache.render(template, videos);
+        var filter = getUrlParameter('filter');
+        if (filter) {
+          var type = getUrlParameter('type');
+          if (type === 'type') {
+            filterType(filter)
+          } else if (type === 'value') {
+            filterValue(filter);
+          }
+        } else {
+          $$('#content').html(allRender);
+        }
       })
+      $$('#toTop').on('click', toTop);
       var fab = new mdui.Fab('#toTop');
       fab.hide();
       var pageFlag = true;
@@ -151,30 +180,62 @@
         }
       });
       var preFilter;
-      var filterByType = function(type) {
-        if (type == preFilter) {
+      $$('#main-drawer>li').on('click', function() {
+        var type = $$(this).attr('filter');
+        filterType(type);
+      });
+      $$('#refresh').on('click', function() {
+        location.reload();
+      })
+
+      function filterType(type) {
+        if (preFilter === ('type' + type)) {
           return;
         }
-        var result;
         if (type === 'a') {
-          result = videos;
+          $$('#content').html(allRender);
         } else {
-          result = {
+          var result = {
             datas: videos.datas.filter(function(video) {
               return video.type === type;
             })
           };
+          var rendered = Mustache.render(template, result);
+          $$('#content').html(rendered);
         }
-        var rendered = Mustache.render(template, result);
-        $$('#content').html(rendered);
-        preFilter = type;
-      };
-      $$('#main-drawer>li').on('click', function() {
-        filterByType($$(this).attr('filter'));
-      });
+        preFilter = ('type' + type);
+        toTop();
+      }
+
+      function filterValue(value) {
+        if (preFilter === ('title' + value)) {
+          return;
+        }
+        if (value.length < 1) {
+          $$('#content').html(allRender);
+        } else {
+          var reg = new RegExp(value, 'i');
+          var result = {
+            datas: videos.datas.filter(function(video) {
+              return reg.test(video.title) || reg.test(video.content);
+            })
+          };
+          var rendered = Mustache.render(template, result);
+          $$('#content').html(rendered);
+        }
+        preFilter = ('title' + value);
+        toTop();
+      }
+      $$('#search').on('keyup', function(e) {
+        if (e.key === 'Enter') {
+          var value = this.value.trim();
+          filterValue(value);
+        }
+      })
     })();
   </script>
-  <script src="https://qingqing.com/static/js/plus.js"></script>
+
+  <script src="https://yiqie.me/client/dist/index.js"></script>
 </body>
 
 </html>

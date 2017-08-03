@@ -11,6 +11,22 @@
   <title>love</title>
   <link href="https://cdn.bootcss.com/mdui/0.2.1/css/mdui.min.css" rel="stylesheet">
 </head>
+<script id="template" type="x-tmpl-mustache">
+  {{#datas}}
+  <a class="card-box mdui-col-sm-6 mdui-col-md-4" href="content.html?video={{video}}">
+    <div class="mdui-card mdui-ripple mdui-hoverable mdui-m-b-3">
+      <div class="mdui-card-media">
+        <img src="{{image}}">
+        <div class="mdui-card-primary ">
+          <div class="mdui-card-header-avatar "><i class="mdui-icon material-icons ">ondemand_video</i></div>
+          <div class="mdui-card-primary-title ">{{title}}</div>
+          <div class="mdui-card-content">{{content}}</div>
+        </div>
+      </div>
+    </div>
+  </a>
+  {{/datas}}
+</script>
 
 <body class="mdui-drawer-body-left mdui-appbar-with-toolbar mdui-theme-primary-indigo mdui-theme-accent-pink mdui-loaded">
   <!-- 头部 -->
@@ -69,38 +85,59 @@
     </div>
   </div>
   <!-- 头部 -->
-  <div class="mdui-container-fluid mdui-p-t-3">
-    <video class="mdui-video-fluid" src="" controls=""> 你浏览器不知支持video </video>
-  </div>
-  <script src="https://cdn.bootcss.com/mdui/0.2.1/js/mdui.min.js "></script>
-  <script type="text/javascript ">
-    (function() {
-      var $$ = mdui.JQ;
-      var video = getUrlParameter('video');
-      $$('video').attr('src', video);
-      $$('#main-drawer>li').on('click', function() {
-        var filter = $$(this).attr('filter');
-        location.href = '/index.html?filter=' + filter + '&type=type'
-      });
+  <div id="content" class="mdui-container mdui-m-t-5">
+    </>
+    <script src="https://cdn.bootcss.com/mdui/0.2.1/js/mdui.min.js "></script>
+    <script src="qrious.min.js"></script>
+    <script type="text/javascript">
+      (function() {
+        var $$ = mdui.JQ;
+        var values = ['ss://YWVzLTI1Ni1jZmI6d3VqaWF4aW9uZytdSENOamR1e1g2@107.175.80.43:8819', 'ss://cmM0LW1kNTp3dWppYXhpb25nMTIzNA@104.140.67.146:8388'];
+        values.forEach(function(value) {
+          var $dom = $$(
+            '<div class="mdui-row mdui-m-b-3"><div class="mdui-textfield">\
+            <i class="mdui-icon material-icons">account_circle</i>\
+            <input class="mdui-textfield-input" placeholder="值" disabled type="text" data-cip-id="cIPJQ342845646" value=' +
+            value + '>\
+          </div>\
+          <canvas class="mdui-col-xs-4"></canvas></div> ')
+          new QRious({
+            element: $dom.find('canvas').get(0),
+            value: value
+          });
+          $dom.appendTo($$('#content'));
+        });
 
-      function getUrlParameter(name) {
-        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-        var results = regex.exec(location.search);
-        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-      };
 
-      $$('#search').on('keyup', function(e) {
-        if (e.key === 'Enter') {
-          var value = this.value.trim();
-          location.href = '/index.html?filter=' + value + '&type=value'
-        }
-      })
-      $$('#refresh').on('click', function() {
-        location.reload();
-      })
-    })();
-  </script>
+"wujiaxiong+]HCNjdu{X6"
+        var video = getUrlParameter('video');
+        $$('video').attr('src', video);
+        $$('#main-drawer>li').on('click', function() {
+          var filter = $$(this).attr('filter');
+          location.href = '/index.html?filter=' + filter + '&type=type'
+        });
+
+        function getUrlParameter(name) {
+          name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+          var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+          var results = regex.exec(location.search);
+          return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        };
+
+        $$('#search').on('keyup', function(e) {
+          if (e.key === 'Enter') {
+            var value = this.value.trim();
+            location.href = '/index.html?filter=' + value + '&type=value'
+          }
+        })
+        $$('#refresh').on('click', function() {
+          location.reload();
+        })
+      })();
+    </script>
 </body>
+
+
+
 
 </html>
