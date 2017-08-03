@@ -85,7 +85,8 @@
     </div>
   </div>
   <!-- 头部 -->
-  <div id="content" class="mdui-container mdui-m-t-5">
+  <div class="mdui-container mdui-p-t-2">
+    <div id="content" class="mdui-row"></div>
   </div>
   <div id="YoYo"></div>
   <script src="https://cdn.bootcss.com/mdui/0.2.1/js/mdui.min.js "></script>
@@ -93,10 +94,10 @@
   <script type="text/javascript">
     (function() {
       var $$ = mdui.JQ;
-      var values = ['ss://YWVzLTI1Ni1jZmI6d3VqaWF4aW9uZytdSENOamR1e1g2@107.175.80.43:8819', 'ss://cmM0LW1kNTp3dWppYXhpb25nMTIzNA@104.140.67.146:8388'];
+      var values = ['ss://YWVzLTI1Ni1jZmI6d3VqaWF4aW9uZytdSENOamR1e1g2@107.175.80.43:8819', 'ss://YWVzLTI1Ni1jZmI6d3VqaWF4aW9uZytdSENOamR1e1g2@104.140.67.146:8819'];
       values.forEach(function(value) {
         var $dom = $$(
-          '<div class="mdui-row mdui-m-b-3"><div class="mdui-textfield">\
+          '<div class="mdui-col-xs-10 mdui-m-b-3"><div class="mdui-textfield">\
             <i class="mdui-icon material-icons">account_circle</i>\
             <input class="mdui-textfield-input" placeholder="值" disabled type="text" data-cip-id="cIPJQ342845646" value=' +
           value + '>\
