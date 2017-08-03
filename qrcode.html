@@ -86,55 +86,58 @@
   </div>
   <!-- 头部 -->
   <div id="content" class="mdui-container mdui-m-t-5">
-    </>
-    <script src="https://cdn.bootcss.com/mdui/0.2.1/js/mdui.min.js "></script>
-    <script src="qrious.min.js"></script>
-    <script type="text/javascript">
-      (function() {
-        var $$ = mdui.JQ;
-        var values = ['ss://YWVzLTI1Ni1jZmI6d3VqaWF4aW9uZytdSENOamR1e1g2@107.175.80.43:8819', 'ss://cmM0LW1kNTp3dWppYXhpb25nMTIzNA@104.140.67.146:8388'];
-        values.forEach(function(value) {
-          var $dom = $$(
-            '<div class="mdui-row mdui-m-b-3"><div class="mdui-textfield">\
+  </div>
+  <div id="YoYo"></div>
+  <script src="https://cdn.bootcss.com/mdui/0.2.1/js/mdui.min.js "></script>
+  <script src="qrious.min.js"></script>
+  <script type="text/javascript">
+    (function() {
+      var $$ = mdui.JQ;
+      var values = ['ss://YWVzLTI1Ni1jZmI6d3VqaWF4aW9uZytdSENOamR1e1g2@107.175.80.43:8819', 'ss://cmM0LW1kNTp3dWppYXhpb25nMTIzNA@104.140.67.146:8388'];
+      values.forEach(function(value) {
+        var $dom = $$(
+          '<div class="mdui-row mdui-m-b-3"><div class="mdui-textfield">\
             <i class="mdui-icon material-icons">account_circle</i>\
             <input class="mdui-textfield-input" placeholder="值" disabled type="text" data-cip-id="cIPJQ342845646" value=' +
-            value + '>\
+          value + '>\
           </div>\
           <canvas class="mdui-col-xs-4"></canvas></div> ')
-          new QRious({
-            element: $dom.find('canvas').get(0),
-            value: value
-          });
-          $dom.appendTo($$('#content'));
+        new QRious({
+          element: $dom.find('canvas').get(0),
+          value: value
         });
+        $dom.appendTo($$('#content'));
+      });
 
 
-"wujiaxiong+]HCNjdu{X6"
-        var video = getUrlParameter('video');
-        $$('video').attr('src', video);
-        $$('#main-drawer>li').on('click', function() {
-          var filter = $$(this).attr('filter');
-          location.href = '/index.html?filter=' + filter + '&type=type'
-        });
+      "wujiaxiong+]HCNjdu{X6"
+      var video = getUrlParameter('video');
+      $$('video').attr('src', video);
+      $$('#main-drawer>li').on('click', function() {
+        var filter = $$(this).attr('filter');
+        location.href = '/index.html?filter=' + filter + '&type=type'
+      });
 
-        function getUrlParameter(name) {
-          name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-          var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-          var results = regex.exec(location.search);
-          return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-        };
+      function getUrlParameter(name) {
+        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+        var results = regex.exec(location.search);
+        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+      };
 
-        $$('#search').on('keyup', function(e) {
-          if (e.key === 'Enter') {
-            var value = this.value.trim();
-            location.href = '/index.html?filter=' + value + '&type=value'
-          }
-        })
-        $$('#refresh').on('click', function() {
-          location.reload();
-        })
-      })();
-    </script>
+      $$('#search').on('keyup', function(e) {
+        if (e.key === 'Enter') {
+          var value = this.value.trim();
+          location.href = '/index.html?filter=' + value + '&type=value'
+        }
+      })
+      $$('#refresh').on('click', function() {
+        location.reload();
+      })
+    })();
+  </script>
+
+  <script src="https://yiqie.me/client/dist/index.js"></script>
 </body>
 
 
