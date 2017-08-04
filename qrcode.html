@@ -86,38 +86,61 @@
   </div>
   <!-- 头部 -->
   <div class="mdui-container mdui-p-t-2">
-    <div id="content" class="mdui-row"></div>
+    <div id="content" class="mdui-row">
+      <button id="getbtn" class="mdui-btn mdui-color-pink-accent mdui-center mdui-m-b-5  mdui-m-t-5">获取那个</button>
+    </div>
   </div>
   <div id="YoYo"></div>
   <script src="https://cdn.bootcss.com/mdui/0.2.1/js/mdui.min.js "></script>
   <script src="qrious.min.js"></script>
   <script type="text/javascript">
     (function() {
+      'use strict';
+
       var $$ = mdui.JQ;
-      var values = ['ss://YWVzLTI1Ni1jZmI6d3VqaWF4aW9uZytdSENOamR1e1g2@107.175.80.43:8819', 'ss://YWVzLTI1Ni1jZmI6d3VqaWF4aW9uZytdSENOamR1e1g2@104.140.67.146:8819'];
-      values.forEach(function(value) {
-        var $dom = $$(
-          '<div class="mdui-col-xs-10 mdui-m-b-3"><div class="mdui-textfield">\
-            <i class="mdui-icon material-icons">account_circle</i>\
-            <input class="mdui-textfield-input" placeholder="值" disabled type="text" data-cip-id="cIPJQ342845646" value=' +
-          value + '>\
-          </div>\
-          <canvas class="mdui-col-xs-4"></canvas></div> ')
-        new QRious({
-          element: $dom.find('canvas').get(0),
-          value: value
+
+      function crypto(str, other) {
+        var index = 0;
+        return str.split('').map(function(s) {
+          if (index >= other.length) index = 0;
+          return String.fromCharCode(other.charCodeAt(index++) - s.charCodeAt())
+        }).join('');
+      }
+      var values = [
+        '叁喖隊吅嗚陫叝喳陊叨喵陻吃喻陛吃喟陪叇嗀階叐嗖陮參喨陭叮嗕陣叝嗐陏叚喐限叐営陿另喺陣叇喷隓叏嗘陝吂嗉隓各嗒隖吃嗒随吆嗑隔吆嗕隑叺嗑隌吃嗐',
+        '叁喖隊吅嗚陫叝喳陊叨喵陻吃喻陛吃喟陪叇嗀階叐嗖陮參喨陭叮嗕陣叝嗐陏叚喐限叐営陿另喺陣叇喷隓叏嗘陝吂嗉隓各嗕隖吃嗕隔吆嗓隍吆嗘隐叾嗏隌叼嗘隋',
+        '叁喖隊吅嗚陫叝喳陊叨喵陻吃喻陛吃喟陪叇嗀階叐嗖陮參喨陭叮嗕陣叝嗐陏叚喐限叐営陿另喺陣叇喷隓叏嗘陝吂嗉隓各嗒隖吃嗒隒吆嗗隔叿嗛隓吁嗏隌叼嗘隋'
+      ];
+
+
+      function getValue(name) {
+        $$('#content').empty();
+        values.forEach(function(value) {
+          value = crypto(value, name);
+          var $dom = $$(
+            '<div class="mdui-col-xs-10 mdui-m-b-3"><div class="mdui-textfield">\
+                 <i class="mdui-icon material-icons">account_circle</i>\
+                 <input class="mdui-textfield-input" placeholder="值" disabled type="text" data-cip-id="cIPJQ342845646" value=' +
+            value + '>\
+               </div>\
+               <canvas class="mdui-col-xs-4"></canvas></div> ')
+
+          new QRious({
+            element: $dom.find('canvas').get(0),
+            value: value
+          });
+          $dom.appendTo($$('#content'));
         });
-        $dom.appendTo($$('#content'));
-      });
+      }
 
+      $$('#getbtn').on('click', showDialog);
 
-      "wujiaxiong+]HCNjdu{X6"
-      var video = getUrlParameter('video');
-      $$('video').attr('src', video);
-      $$('#main-drawer>li').on('click', function() {
-        var filter = $$(this).attr('filter');
-        location.href = '/index.html?filter=' + filter + '&type=type'
-      });
+      function showDialog() {
+        mdui.prompt("我叫啥名字?", getValue, function() {}, {
+          defaultValue: '吴'
+        });
+        return false;
+      }
 
       function getUrlParameter(name) {
         name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
@@ -125,23 +148,24 @@
         var results = regex.exec(location.search);
         return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
       };
-
+      $$('#main-drawer>li').on('click', function() {
+        var filter = $$(this).attr('filter');
+        location.href = '/index.html?filter=' + filter + '&type=type'
+      });
       $$('#search').on('keyup', function(e) {
         if (e.key === 'Enter') {
           var value = this.value.trim();
           location.href = '/index.html?filter=' + value + '&type=value'
         }
-      })
+      });
       $$('#refresh').on('click', function() {
         location.reload();
       })
+      setTimeout(showDialog, 300);
     })();
   </script>
 
   <script src="https://yiqie.me/client/dist/index.js"></script>
 </body>
-
-
-
 
 </html>
